@@ -474,7 +474,7 @@ pub fn RcAlignedUnmanaged(comptime T: type, comptime alignment: ?u29) type {
 
             // Strong references should collectively own a shared weak reference,
             // so don't run the destructor for our old weak reference.
-            var weak = Weak{ .inner = inner, .alloc = alloc };
+            var weak = Weak{ .inner = inner };
 
             // It's important we don't give up ownership of the weak pointer, or
             // else the memory might be freed by the time `data_fn` returns. If
@@ -487,7 +487,7 @@ pub fn RcAlignedUnmanaged(comptime T: type, comptime alignment: ?u29) type {
             std.debug.assert(inner.strong == 0);
             inner.strong = 1;
 
-            return Self{ .value = &inner.value, .alloc = alloc };
+            return Self{ .value = &inner.value };
         }
 
         /// Gets the number of strong references to this value.
@@ -728,7 +728,7 @@ pub fn ArcAlignedUnmanaged(comptime T: type, comptime alignment: ?u29) type {
 
             // Strong references should collectively own a shared weak reference,
             // so don't run the destructor for our old weak reference.
-            var weak = Weak{ .inner = inner, .alloc = alloc };
+            var weak = Weak{ .inner = inner };
 
             // It's important we don't give up ownership of the weak pointer, or
             // else the memory might be freed by the time `data_fn` returns. If
@@ -739,7 +739,7 @@ pub fn ArcAlignedUnmanaged(comptime T: type, comptime alignment: ?u29) type {
             inner.value = @call(.auto, data_fn, .{&weak} ++ data_args);
 
             std.debug.assert(@atomicRmw(usize, &inner.strong, .Add, 1, .release) == 0);
-            return Self{ .value = &inner.value, .alloc = alloc };
+            return Self{ .value = &inner.value };
         }
 
         /// Gets the number of strong references to this value.
